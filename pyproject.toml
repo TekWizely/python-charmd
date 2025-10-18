@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pychmdbg"
+version = "0.1.0"
+description = "CLI to start a PyCharm debug session and then run a Python target in-process"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+  { name = "pychmdbg contributors" }
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Environment :: Console",
+  "Topic :: Software Development :: Debuggers",
+]
+
+[project.urls]
+Homepage = "https://example.com/pychmdbg"
+
+[project.scripts]
+pychmdbg = "pychmdbg.__main__:main"
