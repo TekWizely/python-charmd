@@ -3,11 +3,11 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pychmdbg"
+name = "charmd"
 description = "CLI to start a PyCharm debug session and then run a Python target in-process"
 requires-python = ">=3.8"
 license = { text = "MIT" }
-authors = [ { name = "pychmdbg contributors" } ]
+authors = [ { name = "python-charmd contributors" } ]
 keywords = ["pycharm", "debug", "pydevd", "debugger", "cli"]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -35,23 +35,23 @@ readme = { file = "README.md", content-type = "text/markdown" }
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/TekWizely/pychmdbg"
-Repository = "https://github.com/TekWizely/pychmdbg"
-Issues = "https://github.com/TekWizely/pychmdbg/issues"
-Changelog = "https://github.com/TekWizely/pychmdbg/releases"
+Homepage = "https://github.com/TekWizely/python-charmd"
+Repository = "https://github.com/TekWizely/python-charmd"
+Issues = "https://github.com/TekWizely/python-charmd/issues"
+Changelog = "https://github.com/TekWizely/python-charmd/releases"
 
 [project.scripts]
-pychmdbg = "pychmdbg.__main__:main"
+charmd = "charmd.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["pychmdbg*"]
+include = ["charmd*"]
 
 [tool.setuptools.package-dir]
-pychmdbg = "src/pychmdbg"
+charmd = "src/charmd"
 
 [tool.setuptools]
 license-files = ["LICENSE*", "COPYING*"]
 
 [tool.setuptools.dynamic]
-version = { attr = "pychmdbg.__version__" }
+version = { attr = "charmd.__version__" }

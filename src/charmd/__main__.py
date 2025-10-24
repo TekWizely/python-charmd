@@ -1,14 +1,14 @@
 """
-pychmdbg: Start a PyCharm debug session and then run a user-specified Python target
+charmd: Start a PyCharm debug session and then run a user-specified Python target
 in the same process, similar to how pdb delegates to the target.
 
 Usage examples:
   - Using explicit separator (recommended):
-      python -m pychmdbg --host 127.0.0.1 --port 5678 -- -m mypkg.mymod arg1 arg2
-      python -m pychmdbg -- --version
-      python -m pychmdbg -- script.py arg1 arg2
+      python -m charmd --host 127.0.0.1 --port 5678 -- -m mypkg.mymod arg1 arg2
+      python -m charmd -- --version
+      python -m charmd -- script.py arg1 arg2
   - Without '--' (best-effort split at end of known options):
-      python -m pychmdbg --host 127.0.0.1 --port 5678 -m mypkg.mymod arg1
+      python -m charmd --host 127.0.0.1 --port 5678 -m mypkg.mymod arg1
 
 Notes:
 - The follow-on invocation runs inside this same Python interpreter so that the
@@ -30,10 +30,10 @@ from typing import List, Tuple, Optional, Any
 
 def _load_config() -> dict[str, Any]:
     """
-    Reads configuration from `pychmdbg.conf` in the current working directory.
+    Reads configuration from `charmd.conf` in the current working directory.
     Values are parsed into appropriate types.
     """
-    config_path = os.path.join(os.getcwd(), "pychmdbg.conf")
+    config_path = os.path.join(os.getcwd(), "charmd.conf")
     if not os.path.exists(config_path):
         return {}
 
@@ -77,7 +77,7 @@ def _load_config() -> dict[str, Any]:
 
 def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
     parser = argparse.ArgumentParser(
-        prog="pychmdbg",
+        prog="charmd",
         description=(
             "Start PyCharm debugger via pydevd_pycharm.settrace then run a Python "
             "target in the same process. Use '--' to separate debugger options "
@@ -91,7 +91,7 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
     parser.add_argument(
         "--conf-init",
         action="store_true",
-        help="Create a pychmdbg.conf file with current settings and exit.",
+        help="Create a charmd.conf file with current settings and exit.",
     )
 
     # Debugger connection options (MVP)
@@ -166,17 +166,17 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
 
 def _create_config_file(opts: argparse.Namespace) -> int:
     """
-    Creates a pychmdbg.conf file with the current settings.
+    Creates a charmd.conf file with the current settings.
     If the file already exists, it reports it and exits.
     """
-    config_path = os.path.join(os.getcwd(), "pychmdbg.conf")
+    config_path = os.path.join(os.getcwd(), "charmd.conf")
     if os.path.exists(config_path):
         print(f"Configuration file already exists at: {config_path}", file=sys.stderr)
         return 1
 
     try:
         with open(config_path, "w") as f:
-            f.write("# pychmdbg configuration file\n")
+            f.write("# charmd configuration file\n")
             f.write("# Lines starting with '#' are comments.\n")
             f.write("#\n")
             f.write(f"host = {opts.host}\n")
@@ -200,13 +200,13 @@ def _start_debugger(opts: argparse.Namespace) -> bool:
         if os.path.isdir(opts.pydevd_path):
             sys.path.insert(0, opts.pydevd_path)
         else:
-            print(f"pychmdbg warning: pydevd-path '{opts.pydevd_path}' is not a directory.", file=sys.stderr)
+            print(f"charmd warning: pydevd-path '{opts.pydevd_path}' is not a directory.", file=sys.stderr)
 
     try:
         import pydevd_pycharm  # type: ignore
     except ImportError as e:
         print(
-            "pychmdbg error: pydevd_pycharm is not installed or importable.\n"
+            "charmd error: pydevd_pycharm is not installed or importable.\n"
             "Install the PyCharm debug package (e.g., 'pip install pydevd-pycharm')\n"
             "or specify its location with --pydevd-path.",
             file=sys.stderr,
@@ -225,7 +225,7 @@ def _start_debugger(opts: argparse.Namespace) -> bool:
         return True
     except Exception as e:  # Connection refused, timeouts, etc.
         print(
-            f"pychmdbg error: failed to connect to debug server at {opts.host}:{opts.port}: {e}",
+            f"charmd error: failed to connect to debug server at {opts.host}:{opts.port}: {e}",
             file=sys.stderr,
         )
         # Typical failure when port is in use or server not listening
@@ -239,7 +239,7 @@ def _run_follow_on(args: List[str]) -> int:
     # Emulate common python CLI forms: -m, -c, or script path
     if args[0] == "-m":
         if len(args) < 2:
-            print("pychmdbg error: '-m' requires a module name", file=sys.stderr)
+            print("charmd error: '-m' requires a module name", file=sys.stderr)
             return 2
         module = args[1]
         # Set sys.argv as if running `python -m module ...`
@@ -256,7 +256,7 @@ def _run_follow_on(args: List[str]) -> int:
 
     if args[0] == "-c":
         if len(args) < 2:
-            print("pychmdbg error: '-c' requires a code string", file=sys.stderr)
+            print("charmd error: '-c' requires a code string", file=sys.stderr)
             return 2
         code = args[1]
         # For `python -c code [arg1 ...]`, sys.argv[0] is '-c'
@@ -275,7 +275,7 @@ def _run_follow_on(args: List[str]) -> int:
     # Otherwise treat first arg as a script path
     script = args[0]
     if not os.path.exists(script):
-        print(f"pychmdbg error: script not found: {script}", file=sys.stderr)
+        print(f"charmd error: script not found: {script}", file=sys.stderr)
         return 2
 
     # Set sys.argv as if running `python script.py ...`
@@ -310,11 +310,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Bail early if no follow-on configured
     if not follow_on:
         print(
-            "pychmdbg error: no follow-on target provided.\n"
+            "charmd error: no follow-on target provided.\n"
             "Examples:\n"
-            "  pychmdbg -- -m mypkg.mymod arg1\n"
-            "  pychmdbg -- script.py arg1 arg2\n"
-            "  pychmdbg -- -c \"print('hello')\"",
+            "  charmd -- -m mypkg.mymod arg1\n"
+            "  charmd -- script.py arg1 arg2\n"
+            "  charmd -- -c \"print('hello')\"",
             file=sys.stderr,
         )
         return 2

@@ -5,7 +5,7 @@ if __name__ == '__main__':
     # path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
     # print(path)
     # sys.path.append(path)
-    from src.pychmdbg.__main__ import main
+    from src.charmd.__main__ import main
     if sys.argv[0].endswith('.exe'):
         sys.argv[0] = sys.argv[0][:-4]
     sys.exit(main())

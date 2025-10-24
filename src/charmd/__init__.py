@@ -1,13 +1,13 @@
-"""pychmdbg package
+"""charmd package
 
 Provides a CLI to start a PyCharm debug session and then run a Python target
 within the same interpreter process so the instrumentation is transparent.
 
 You can invoke via:
-  - python -m pychmdbg -- [python-args]
-  - pychmdbg -- [python-args]  (after installing the package)
+  - python -m charmd -- [python-args]
+  - charmd -- [python-args]  (after installing the package)
 
-See pychmdbg.__main__ for details.
+See charmd.__main__ for details.
 """
 from __future__ import annotations
 
