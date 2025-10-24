@@ -1,26 +1,57 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pychmdbg"
-version = "0.1.0"
 description = "CLI to start a PyCharm debug session and then run a Python target in-process"
 requires-python = ">=3.8"
 license = { text = "MIT" }
-authors = [
-  { name = "pychmdbg contributors" }
-]
+authors = [ { name = "pychmdbg contributors" } ]
+keywords = ["pycharm", "debug", "pydevd", "debugger", "cli"]
 classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Debuggers",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Environment :: Console",
-  "Topic :: Software Development :: Debuggers",
+  "Operating System :: OS Independent",
 ]
+# Single-source version and provide README as long description
+# (intentionally no static `version = "..."` here)
+dynamic = ["version"]
+readme = { file = "README.md", content-type = "text/markdown" }
+
+# pydevd-pycharm is NOT a dependency.
+# When using pycharm, it provides its own version of the module specific to the running ide.
+dependencies = []
 
 [project.urls]
-Homepage = "https://example.com/pychmdbg"
+Homepage = "https://github.com/TekWizely/pychmdbg"
+Repository = "https://github.com/TekWizely/pychmdbg"
+Issues = "https://github.com/TekWizely/pychmdbg/issues"
+Changelog = "https://github.com/TekWizely/pychmdbg/releases"
 
 [project.scripts]
 pychmdbg = "pychmdbg.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pychmdbg*"]
+
+[tool.setuptools.package-dir]
+pychmdbg = "src/pychmdbg"
+
+[tool.setuptools]
+license-files = ["LICENSE*", "COPYING*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pychmdbg.__version__" }

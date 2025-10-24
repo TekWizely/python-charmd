@@ -25,7 +25,54 @@ import argparse
 import os
 import runpy
 import sys
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Any
+
+
+def _load_config() -> dict[str, Any]:
+    """
+    Reads configuration from `pychmdbg.conf` in the current working directory.
+    Values are parsed into appropriate types.
+    """
+    config_path = os.path.join(os.getcwd(), "pychmdbg.conf")
+    if not os.path.exists(config_path):
+        return {}
+
+    config = {}
+    with open(config_path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                # Split into key and raw value; strip key but preserve value for further handling
+                key_part, value_part = line.split("=", 1)
+                key = key_part.strip()
+
+                # For detection of quoted values, strip outer whitespace only for checking.
+                # If the trimmed value is quoted with matching single/double quotes, extract
+                # the inner content and preserve any whitespace inside the quotes.
+                value_trimmed = value_part.strip()
+                if (
+                    len(value_trimmed) >= 2
+                    and value_trimmed[0] == value_trimmed[-1]
+                    and value_trimmed[0] in ("'", '"')
+                ):
+                    value = value_trimmed[1:-1]
+                else:
+                    # Unquoted values: strip leading/trailing whitespace as before
+                    value = value_part.strip()
+
+                # Coerce to intended types
+                if key == 'port':
+                    try:
+                        config[key] = int(value)
+                    except ValueError:
+                        pass  # Ignore malformed port
+                elif key in ('suspend', 'stdout_to_server', 'stderr_to_server'):
+                    config[key] = value.lower() in ('true', '1', 'yes', 'y', 'on')
+                elif key in ('host', 'pydevd_path'):
+                    config[key] = value
+    return config
 
 
 def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
@@ -40,10 +87,17 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         allow_abbrev=False,
     )
 
+    # Conf-init action
+    parser.add_argument(
+        "--conf-init",
+        action="store_true",
+        help="Create a pychmdbg.conf file with current settings and exit.",
+    )
+
     # Debugger connection options (MVP)
     parser.add_argument(
         "--host",
-        default="localhost", # 127.0.0.1
+        default="localhost",  # 127.0.0.1
         help="PyCharm debug server host (default: localhost)",
     )
     parser.add_argument(
@@ -55,6 +109,7 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
     parser.add_argument(
         "--suspend",
         action="store_true",
+        default=False,
         help="Suspend on start (default: False)",
     )
     # stdout/stderr redirection to debug console
@@ -62,7 +117,6 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         "--stdout-to-server",
         dest="stdout_to_server",
         action="store_true",
-        default=True,
         help="Redirect stdout to debug server (default: True)",
     )
     parser.add_argument(
@@ -75,7 +129,6 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         "--stderr-to-server",
         dest="stderr_to_server",
         action="store_true",
-        default=True,
         help="Redirect stderr to debug server (default: True)",
     )
     parser.add_argument(
@@ -84,6 +137,20 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         action="store_false",
         help="Do not redirect stderr to debug server",
     )
+    parser.add_argument(
+        "--pydevd-path",
+        default=None,
+        help="Path to the pydevd-pycharm module directory.",
+    )
+
+    # Set hardcoded defaults for paired flags
+    parser.set_defaults(stdout_to_server=True, stderr_to_server=True)
+
+    # Layering of settings:
+    # 1. Hardcoded defaults (in add_argument or set_defaults)
+    # 2. Project-specific config file
+    # 3. Command-line arguments
+    parser.set_defaults(**_load_config())
 
     # Parse known args, leave the rest as follow-on target and its args
     # This allows using either '--' or end-of-known-args behavior.
@@ -97,14 +164,51 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
     return opts, remainder
 
 
-def _start_debugger(opts: argparse.Namespace) -> None:
+def _create_config_file(opts: argparse.Namespace) -> int:
+    """
+    Creates a pychmdbg.conf file with the current settings.
+    If the file already exists, it reports it and exits.
+    """
+    config_path = os.path.join(os.getcwd(), "pychmdbg.conf")
+    if os.path.exists(config_path):
+        print(f"Configuration file already exists at: {config_path}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(config_path, "w") as f:
+            f.write("# pychmdbg configuration file\n")
+            f.write("# Lines starting with '#' are comments.\n")
+            f.write("#\n")
+            f.write(f"host = {opts.host}\n")
+            f.write(f"port = {opts.port}\n")
+            f.write(f"suspend = {str(opts.suspend).lower()}\n")
+            f.write(f"stdout_to_server = {str(opts.stdout_to_server).lower()}\n")
+            f.write(f"stderr_to_server = {str(opts.stderr_to_server).lower()}\n")
+            if opts.pydevd_path:
+                f.write(f"pydevd_path = {opts.pydevd_path}\n")
+            else:
+              f.write(f"#pydevd_path = <path to pydevd_pycharm module>\n")
+        print(f"Configuration file created at: {config_path}")
+        return 0
+    except IOError as e:
+        print(f"Error creating configuration file: {e}", file=sys.stderr)
+        return 1
+
+
+def _start_debugger(opts: argparse.Namespace) -> bool:
+    if opts.pydevd_path:
+        if os.path.isdir(opts.pydevd_path):
+            sys.path.insert(0, opts.pydevd_path)
+        else:
+            print(f"pychmdbg warning: pydevd-path '{opts.pydevd_path}' is not a directory.", file=sys.stderr)
+
     try:
         import pydevd_pycharm  # type: ignore
     except ImportError as e:
         print(
             "pychmdbg error: pydevd_pycharm is not installed or importable.\n"
             "Install the PyCharm debug package (e.g., 'pip install pydevd-pycharm')\n"
-            "and try again.",
+            "or specify its location with --pydevd-path.",
             file=sys.stderr,
         )
         raise SystemExit(2) from e
@@ -118,6 +222,7 @@ def _start_debugger(opts: argparse.Namespace) -> None:
             stderr_to_server=opts.stderr_to_server,
             suspend=opts.suspend,
         )
+        return True
     except Exception as e:  # Connection refused, timeouts, etc.
         print(
             f"pychmdbg error: failed to connect to debug server at {opts.host}:{opts.port}: {e}",
@@ -128,16 +233,8 @@ def _start_debugger(opts: argparse.Namespace) -> None:
 
 
 def _run_follow_on(args: List[str]) -> int:
-    if not args:
-        print(
-            "pychmdbg error: no follow-on target provided.\n"
-            "Examples:\n"
-            "  pychmdbg -- -m mypkg.mymod arg1\n"
-            "  pychmdbg -- script.py arg1 arg2\n"
-            "  pychmdbg -- -c \"print('hello')\"",
-            file=sys.stderr,
-        )
-        return 2
+
+    sys.path.append(os.path.abspath(os.getcwd()))
 
     # Emulate common python CLI forms: -m, -c, or script path
     if args[0] == "-m":
@@ -145,7 +242,6 @@ def _run_follow_on(args: List[str]) -> int:
             print("pychmdbg error: '-m' requires a module name", file=sys.stderr)
             return 2
         module = args[1]
-        follow_argv = [module] + args[2:]
         # Set sys.argv as if running `python -m module ...`
         old_argv = sys.argv
         sys.argv = [module] + args[2:]
@@ -195,17 +291,45 @@ def _run_follow_on(args: List[str]) -> int:
         sys.argv = old_argv
 
 
+def _stop_debugger():
+    """Safely stops the debugger if it was started."""
+    if 'pydevd_pycharm' in sys.modules:
+        pydevd_pycharm = sys.modules['pydevd_pycharm']
+        pydevd_pycharm.stoptrace()
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
 
     opts, follow_on = _parse_args(argv)
 
-    # Initialize debugger connection first
-    _start_debugger(opts)
+    if opts.conf_init:
+        return _create_config_file(opts)
 
-    # Delegate to the follow-on target in this same interpreter
-    return _run_follow_on(follow_on)
+    # Bail early if no follow-on configured
+    if not follow_on:
+        print(
+            "pychmdbg error: no follow-on target provided.\n"
+            "Examples:\n"
+            "  pychmdbg -- -m mypkg.mymod arg1\n"
+            "  pychmdbg -- script.py arg1 arg2\n"
+            "  pychmdbg -- -c \"print('hello')\"",
+            file=sys.stderr,
+        )
+        return 2
+
+    debug_started = False
+    try:
+        # Initialize debugger connection first
+        debug_started = _start_debugger(opts)
+
+        # Delegate to the follow-on target in this same interpreter
+        return _run_follow_on(follow_on)
+    finally:
+        if debug_started:
+            _stop_debugger()
+            debug_started = False
 
 
 if __name__ == "__main__":
