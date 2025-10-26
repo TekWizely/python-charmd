@@ -9,6 +9,7 @@ You can invoke via:
 
 See charmd.__main__ for details.
 """
+
 from __future__ import annotations
 
 __all__ = ["main", "__version__"]

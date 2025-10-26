@@ -19,6 +19,7 @@ Notes:
   * <script_path> [args]
 - Interpreter-level flags (e.g., -O, -X) are not supported in-process.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -63,14 +64,14 @@ def _load_config() -> dict[str, Any]:
                     value = value_part.strip()
 
                 # Coerce to intended types
-                if key == 'port':
+                if key == "port":
                     try:
                         config[key] = int(value)
                     except ValueError:
                         pass  # Ignore malformed port
-                elif key in ('suspend', 'stdout_to_server', 'stderr_to_server'):
-                    config[key] = value.lower() in ('true', '1', 'yes', 'y', 'on')
-                elif key in ('host', 'pydevd_path'):
+                elif key in ("suspend", "stdout_to_server", "stderr_to_server"):
+                    config[key] = value.lower() in ("true", "1", "yes", "y", "on")
+                elif key in ("host", "pydevd_path"):
                     config[key] = value
     return config
 
@@ -187,7 +188,7 @@ def _create_config_file(opts: argparse.Namespace) -> int:
             if opts.pydevd_path:
                 f.write(f"pydevd_path = {opts.pydevd_path}\n")
             else:
-              f.write("#pydevd_path = <path to pydevd_pycharm module>\n")
+                f.write("#pydevd_path = <path to pydevd_pycharm module>\n")
         print(f"Configuration file created at: {config_path}")
         return 0
     except IOError as e:
@@ -200,7 +201,10 @@ def _start_debugger(opts: argparse.Namespace) -> bool:
         if os.path.isdir(opts.pydevd_path):
             sys.path.insert(0, opts.pydevd_path)
         else:
-            print(f"charmd warning: pydevd-path '{opts.pydevd_path}' is not a directory.", file=sys.stderr)
+            print(
+                f"charmd warning: pydevd-path '{opts.pydevd_path}' is not a directory.",
+                file=sys.stderr,
+            )
 
     try:
         import pydevd_pycharm  # type: ignore
@@ -293,8 +297,8 @@ def _run_follow_on(args: List[str]) -> int:
 
 def _stop_debugger():
     """Safely stops the debugger if it was started."""
-    if 'pydevd_pycharm' in sys.modules:
-        pydevd_pycharm = sys.modules['pydevd_pycharm']
+    if "pydevd_pycharm" in sys.modules:
+        pydevd_pycharm = sys.modules["pydevd_pycharm"]
         pydevd_pycharm.stoptrace()
 
 
