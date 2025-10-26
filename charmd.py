@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 if __name__ == '__main__':
-    import sys, os
+    import sys
     print(sys.path)
     # path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
     # print(path)

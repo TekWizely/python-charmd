@@ -15,4 +15,4 @@ __all__ = ["main", "__version__"]
 __version__ = "0.1.0"
 
 # Re-export main for console_scripts entry-point convenience
-from .__main__ import main
+from .__main__ import main  # noqa: F401

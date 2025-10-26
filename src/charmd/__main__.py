@@ -25,7 +25,7 @@ import argparse
 import os
 import runpy
 import sys
-from typing import List, Tuple, Optional, Any
+from typing import Any, List, Optional, Tuple
 
 
 def _load_config() -> dict[str, Any]:
@@ -187,7 +187,7 @@ def _create_config_file(opts: argparse.Namespace) -> int:
             if opts.pydevd_path:
                 f.write(f"pydevd_path = {opts.pydevd_path}\n")
             else:
-              f.write(f"#pydevd_path = <path to pydevd_pycharm module>\n")
+              f.write("#pydevd_path = <path to pydevd_pycharm module>\n")
         print(f"Configuration file created at: {config_path}")
         return 0
     except IOError as e:
