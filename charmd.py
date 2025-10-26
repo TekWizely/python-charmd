@@ -2,10 +2,6 @@
 if __name__ == "__main__":
     import sys
 
-    print(sys.path)
-    # path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
-    # print(path)
-    # sys.path.append(path)
     from src.charmd.__main__ import main
 
     if sys.argv[0].endswith(".exe"):

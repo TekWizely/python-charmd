@@ -28,6 +28,8 @@ import runpy
 import sys
 from typing import Any, List, Optional, Tuple
 
+from . import __version__
+
 
 def _load_config() -> dict[str, Any]:
     """
@@ -86,6 +88,13 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         ),
         add_help=True,
         allow_abbrev=False,
+    )
+
+    # Version flag
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
 
     # Conf-init action
