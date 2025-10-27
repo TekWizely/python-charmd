@@ -97,13 +97,6 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         version=f"%(prog)s {__version__}",
     )
 
-    # Conf-init action
-    parser.add_argument(
-        "--conf-init",
-        action="store_true",
-        help="Create a charmd.conf file with current settings and exit.",
-    )
-
     # Debugger connection options (MVP)
     parser.add_argument(
         "--host",
@@ -151,6 +144,12 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
         "--pydevd-path",
         default=None,
         help="Path to the pydevd-pycharm module directory.",
+    )
+    # Conf-init action
+    parser.add_argument(
+        "--conf-init",
+        action="store_true",
+        help="Create a charmd.conf file with current settings and exit.",
     )
 
     # Set hardcoded defaults for paired flags
@@ -207,20 +206,14 @@ def _create_config_file(opts: argparse.Namespace) -> int:
 
 def _start_debugger(opts: argparse.Namespace) -> bool:
     if opts.pydevd_path:
-        if os.path.isdir(opts.pydevd_path):
-            sys.path.insert(0, opts.pydevd_path)
-        else:
-            print(
-                f"charmd warning: pydevd-path '{opts.pydevd_path}' is not a directory.",
-                file=sys.stderr,
-            )
+        sys.path.insert(0, opts.pydevd_path)
 
     try:
         import pydevd_pycharm  # type: ignore
     except ImportError as e:
         print(
             "charmd error: pydevd_pycharm is not installed or importable.\n"
-            "Install the PyCharm debug package (e.g., 'pip install pydevd-pycharm')\n"
+            "Install the PyCharm debug package (e.g., 'pip install pydevd-pycharm~=<PyCharm version>')\n"
             "or specify its location with --pydevd-path.",
             file=sys.stderr,
         )
