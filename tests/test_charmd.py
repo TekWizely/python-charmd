@@ -1,9 +1,8 @@
 """Minimal test for charmd package."""
 
-import subprocess
-import sys
+import pytest
 
-from src.charmd import __version__
+from src.charmd import __version__, main
 
 
 def test_version():
@@ -12,21 +11,21 @@ def test_version():
     assert isinstance(__version__, str)
 
 
-def test_version_flag():
+def test_version_flag(capsys):
     """Test that --version flag prints version and exits."""
-    # Run charmd with --version flag
-    result = subprocess.run(
-        [sys.executable, "-m", "charmd", "--version"],
-        capture_output=True,
-        text=True,
-    )
+    # Run charmd with --version flag - should exit with code 0
+    with pytest.raises(SystemExit) as exc_info:
+        main(["--version"])
 
     # Should exit with code 0
-    assert result.returncode == 0
+    assert exc_info.value.code == 0
+
+    # Capture output
+    captured = capsys.readouterr()
 
     # Should print "charmd <version>" to stdout
-    output = result.stdout.strip()
+    output = captured.out.strip()
     assert output == f"charmd {__version__}"
 
     # Should not print to stderr
-    assert result.stderr == ""
+    assert captured.err == ""
