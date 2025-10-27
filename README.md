@@ -2,6 +2,15 @@
 
 A PyCharm debug session helper that starts a debug server and then runs your Python target in the same process.
 
+## Why charmd?
+
+PyCharm's debugger is powerful, but debugging scripts with different arguments or configurations typically means editing Run Configurations through the IDE. This becomes cumbersome when:
+- You need to debug one-off commands with unique CLI arguments
+- You're testing different script variations or parameter combinations
+- You want the simplicity of command-line debugging (like `pdb` or `debugpy`) with PyCharm's full IDE debugging experience
+
+`charmd` eliminates this friction by letting you debug any Python command directly from the terminal.
+
 ---
 
 ### TOC
