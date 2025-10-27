@@ -7,9 +7,10 @@ A PyCharm debug session helper that starts a debug server and then runs your Pyt
 ### TOC
 * [Requirements](#requirements)
 * [Quick Start](#quick-start)
+* [Configuration File](#configuration-file)
 * [Installation](#installation)
 * [Installing pydevd-pycharm](#installing-pydevd-pycharm)
-sdf
+
 ---
 
 ### Requirements
@@ -39,7 +40,7 @@ _debug options_
 ```text
   -h, --help             Show this help message and exit
   --version              Show program's version number and exit
- 
+
   --host HOST            PyCharm debug server host (default: localhost)
   --port PORT            PyCharm debug server port (default: 5678)
   --suspend              Suspend on start (default: False)
@@ -49,11 +50,96 @@ _debug options_
 
   --stderr-to-server     Redirect stderr to debug server (default: True)
   --no-stderr-to-server  Do not redirect stderr to debug server
- 
+
   --pydevd-path PATH     Path to the pydevd-pycharm module directory.
 
   --conf-init            Create a charmd.conf file with current settings and exit.
  ```
+
+## Configuration File
+
+`charmd` supports a configuration file for setting default debug options on a per-project basis. This eliminates the need to specify common options on the command line for every invocation.
+
+### File Location
+
+The configuration file must be named `charmd.conf` and placed in the current working directory (the directory from which you run `charmd`).
+
+### Creating the Configuration File
+
+#### Option 1: Automatic Generation
+
+Use the `--conf-init` flag to generate a configuration file with your current settings:
+
+```bash
+charmd --host 192.168.1.100 --port 5679 --suspend --conf-init
+```
+
+This creates a `charmd.conf` file in the current directory with the specified settings.
+
+#### Option 2: Manual Creation
+
+Create a `charmd.conf` file manually with your preferred text editor:
+
+```bash
+# charmd configuration file
+# Lines starting with '#' are comments.
+
+host = localhost
+port = 5678
+suspend = false
+stdout_to_server = true
+stderr_to_server = true
+#pydevd_path = /path/to/pydevd_pycharm
+```
+
+### Configuration Options
+
+All command-line debug options can be configured in the file:
+
+| Option             | Type    | Default     | Description                             |
+|--------------------|---------|-------------|-----------------------------------------|
+| `host`             | string  | `localhost` | PyCharm debug server host               |
+| `port`             | integer | `5678`      | PyCharm debug server port               |
+| `suspend`          | boolean | `false`     | Suspend execution on start              |
+| `stdout_to_server` | boolean | `true`      | Redirect stdout to debug server         |
+| `stderr_to_server` | boolean | `true`      | Redirect stderr to debug server         |
+| `pydevd_path`      | string  | (none)      | Path to pydevd-pycharm module directory |
+
+### File Format
+
+- **Key-value pairs:** Use `key = value` syntax
+- **Comments:** Lines starting with `#` are ignored
+- **Whitespace:** Leading and trailing whitespace is trimmed
+- **Quotes:** Values can be quoted with single or double quotes to preserve internal whitespace
+  ```
+  host = "my host with spaces"
+  pydevd_path = '/Applications/PyCharm.app/Contents/debug-eggs'
+  ```
+- **Boolean values:** Accepted values are `true`, `false`, `1`, `0`, `yes`, `no`, `y`, `n`, `on`, `off` (case-insensitive)
+
+### Configuration Precedence
+
+Settings are applied in the following order (later sources override earlier ones):
+
+1. **Built-in defaults** (e.g., `host=localhost`, `port=5678`)
+2. **Configuration file** (`charmd.conf` in current directory)
+3. **Command-line arguments** (highest priority)
+
+This allows you to set project-wide defaults in `charmd.conf` and override them on a per-invocation basis when needed.
+
+### Example Workflow
+
+```bash
+# Set up project-specific debug configuration
+cd /path/to/myproject
+charmd --host 192.168.1.100 --port 5679 --conf-init
+
+# Now run with config file defaults
+charmd -- myscript.py
+
+# Override specific settings when needed
+charmd --suspend -- myscript.py
+```
 
 ## Installation
 
