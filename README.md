@@ -13,16 +13,31 @@ PyCharm's debugger is powerful, but debugging scripts with different arguments o
 
 ---
 
-### TOC
+## TOC
 * [Requirements](#requirements)
 * [Quick Start](#quick-start)
 * [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm)
+  * [Use the library from your PyCharm installation](#option-1-use-the-library-from-your-pycharm-installation)
+  * [Install using pip](#option-2-install-using-pip)
 * [Configuration File](#configuration-file)
+  * [File Location](#file-location)
+  * [Creating the Configuration File](#creating-the-configuration-file)
+    * [Automatic Generation](#option-1-automatic-generation)
+    * [Manual Creation](#option-2-manual-creation)
+  * [Configuration Options](#configuration-options)
+  * [File Format](#file-format)
+  * [Configuration Precedence](#configuration-precedence)
+  * [Example Workflow](#example-workflow)
 * [Installation](#installation)
+  * [From PyPI (Recommended)](#from-pypi-recommended)
+  * [From Wheel File](#from-wheel-file)
+  * [From Source (Clone Repository)](#from-source-clone-repository)
+  * [Verifying Installation](#verifying-installation)
+  * [Uninstalling](#uninstalling)
 
 ---
 
-### Requirements
+## Requirements
 
 - Python 3.8 or higher
 - [pydevd-pycharm](https://pypi.org/project/pydevd-pycharm/) package (see [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm) below)
@@ -30,6 +45,10 @@ PyCharm's debugger is powerful, but debugging scripts with different arguments o
 **Note:** `charmd` does not automatically install `pydevd-pycharm` as a dependency. This is intentional, as PyCharm installations ship with their own preferred version of the library that should be used for debugging. See [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm) below.
 
 ## Quick start
+
+**⚠️ Important:** Before running any `charmd` command, ensure that PyCharm's Python Debug Server is already running and listening on the configured host and port (default: localhost:5678).
+
+See [PyCharm's Debug Documentation](https://www.jetbrains.com/help/pycharm/debugging-code.html) for more information.
 
 _usage_
 ```text
@@ -39,7 +58,7 @@ charmd [debug-options ...] [--] (-m module | -c command | pyfile) [args ...]
 **Note:** `charmd` is good at distinguishing debug options from the target specification.  In cases where they may be ambiguity, you can use `--` to clearly specify the start of the target specification.
 
 _examples_
-```text
+```bash
 charmd -m mypkg.mymod arg1
 charmd -c "print('hello')"
 charmd -- script.py arg1 arg2
@@ -63,7 +82,7 @@ _debug options_
   --pydevd-path PATH     Path to the pydevd-pycharm module directory.
 
   --conf-init            Create a charmd.conf file with current settings and exit.
- ```
+```
 
 ## Locating or Installing pydevd-pycharm
 
@@ -132,7 +151,7 @@ This creates a `charmd.conf` file in the current directory with the specified se
 
 Create a `charmd.conf` file manually with your preferred text editor:
 
-```bash
+```properties
 # charmd configuration file
 # Lines starting with '#' are comments.
 
