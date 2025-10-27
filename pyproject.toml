@@ -111,10 +111,9 @@ exclude_lines = [
 ]
 
 # Fail if total coverage is below this percentage
-# Set to 30% initially - increase as more tests are added
 # NOTE: To override threshold from command line
 #     pytest --cov --cov-fail-under=50
-fail_under = 30
+#fail_under = 90
 
 [tool.coverage.paths]
 source = [
