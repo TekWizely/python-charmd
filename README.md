@@ -7,18 +7,18 @@ A PyCharm debug session helper that starts a debug server and then runs your Pyt
 ### TOC
 * [Requirements](#requirements)
 * [Quick Start](#quick-start)
+* [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm)
 * [Configuration File](#configuration-file)
 * [Installation](#installation)
-* [Installing pydevd-pycharm](#installing-pydevd-pycharm)
 
 ---
 
 ### Requirements
 
 - Python 3.8 or higher
-- [pydevd-pycharm](https://pypi.org/project/pydevd-pycharm/) package (see [installing pydevd-pycharm](#installing-pydevd-pycharm) below)
+- [pydevd-pycharm](https://pypi.org/project/pydevd-pycharm/) package (see [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm) below)
 
-**Note:** `charmd` does not automatically install `pydevd-pycharm` as a dependency. This is intentional, as PyCharm installations ship with their own preferred version of the library that should be used for debugging.
+**Note:** `charmd` does not automatically install `pydevd-pycharm` as a dependency. This is intentional, as PyCharm installations ship with their own preferred version of the library that should be used for debugging. See [Locating or Installing pydevd-pycharm](#locating-or-installing-pydevd-pycharm) below.
 
 ## Quick start
 
@@ -55,6 +55,49 @@ _debug options_
 
   --conf-init            Create a charmd.conf file with current settings and exit.
  ```
+
+## Locating or Installing pydevd-pycharm
+
+`charmd` requires the `pydevd-pycharm` library to communicate with PyCharm's debug server. You can either locate an existing installation (if PyCharm is installed) or install a compatible version via pip.
+
+### Option 1: Use the library from your PyCharm installation
+
+If you have PyCharm installed, you can point `charmd` to the bundled `pydevd-pycharm.egg` file in your PyCharm installation directory:
+
+**Linux/Windows:**
+```
+<PyCharm directory>/debug-egg/pydevd-pycharm.egg
+```
+
+**MacOS:**
+```
+<PyCharm directory>/Contents/debug-eggs/pydevd-pycharm.egg
+```
+
+For example, on MacOS:
+```
+/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg
+```
+
+Configure `charmd` to use this path via the `pydevd_path` setting in your [configuration file](#configuration-file) or the `--pydevd-path` command-line option.
+
+### Option 2: Install using pip
+
+If PyCharm is not installed on your system, install the `pydevd-pycharm` package matching your PyCharm version:
+
+```bash
+pip install pydevd-pycharm~=<version of PyCharm on the local machine>
+```
+
+For example, if your PyCharm version is 242.20224.428:
+
+```bash
+pip install pydevd-pycharm~=242.20224.428
+```
+
+To find your PyCharm version, go to **PyCharm** → **About PyCharm** (or **Help** → **About** on some platforms).
+
+For more information, see the [JetBrains Remote Debugging documentation](https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html#remote-debug-config).
 
 ## Configuration File
 
@@ -230,50 +273,6 @@ To remove `charmd`:
 ```bash
 pip uninstall charmd
 ```
-
-## Installing pydevd-pycharm
-
-You have two options for installing the `pydevd-pycharm` package:
-
-### Option 1: Use the egg file from PyCharm installation
-
-You can use the `pydevd-pycharm.egg` file directly from your PyCharm installation directory:
-
-**Linux/Windows:**
-```
-<PyCharm directory>/debug-egg/pydevd-pycharm.egg
-```
-
-**MacOS:**
-```
-<PyCharm directory>/Contents/debug-eggs/pydevd-pycharm.egg
-```
-
-For example, on MacOS:
-```
-/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg
-```
-
-### Option 2: Install using pip
-
-Install the `pydevd-pycharm` package matching your PyCharm version:
-
-```bash
-pip install pydevd-pycharm~=<version of PyCharm on the local machine>
-```
-
-For example, if your PyCharm version is 242.20224.428:
-
-```bash
-pip install pydevd-pycharm~=242.20224.428
-```
-
-To find your PyCharm version, go to **PyCharm** → **About PyCharm** (or **Help** → **About** on some platforms).
-
-
-You can configure `charmd` to use this path via the `pydevd_path` setting in your configuration file or the `--pydevd-path` command-line option.
-
-For more information, see the [JetBrains Remote Debugging documentation](https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html#remote-debug-config).
 
 ----------
 ## License
