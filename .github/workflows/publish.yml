@@ -104,15 +104,37 @@ jobs:
           name: python-package-distributions
           path: dist/
 
+      - name: Validate distributions
+        run: |
+          if [ -z "$(ls -A dist/)" ]; then
+            echo "Error: No distribution files found"
+            exit 1
+          fi
+          echo "Found distributions:"
+          ls -lh dist/
+
       - name: Sign distributions with Sigstore
         uses: sigstore/gh-action-sigstore-python@v3.1.0
         with:
           release-signing-artifacts: true
+        # Note: Sigstore transparency logs are public. This is acceptable as
+        # the repository will eventually be public. Signing now establishes
+        # provenance from the start of the project.
 
       - name: Upload artifacts to GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: >-
-          gh release upload
-          '${{ github.ref_name }}' dist/**
-          --repo '${{ github.repository }}'
+        run: |
+          gh release upload \
+            '${{ github.ref_name }}' dist/** \
+            --repo '${{ github.repository }}' \
+            --clobber
+
+      - name: Verify release assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          echo "Release assets:"
+          gh release view '${{ github.ref_name }}' \
+            --repo '${{ github.repository }}' \
+            --json assets -q '.assets[].name'
