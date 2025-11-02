@@ -116,7 +116,9 @@ jobs:
       - name: Sign distributions with Sigstore
         uses: sigstore/gh-action-sigstore-python@v3.1.0
         with:
-          release-signing-artifacts: true
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
         # Note: Sigstore transparency logs are public. This is acceptable as
         # the repository will eventually be public. Signing now establishes
         # provenance from the start of the project.
