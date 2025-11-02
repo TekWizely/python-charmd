@@ -68,7 +68,7 @@ jobs:
 
   publish-to-pypi:
     name: Publish to PyPI
-    needs: [publish-to-testpypi]
+    needs: [validate-testpypi]
     runs-on: ubuntu-latest
 
     environment:
@@ -118,4 +118,3 @@ jobs:
           gh release upload
           '${{ github.ref_name }}' dist/**
           --repo '${{ github.repository }}'
-
