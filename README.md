@@ -236,7 +236,7 @@ pip install --upgrade charmd
 
 ### From Wheel File
 
-Wheel (`.whl`) files are available as release assets on the [GitHub releases page](https://github.com/tekwizely/pycharm_debug/releases). Download the desired version and install it directly:
+Wheel (`.whl`) files are available as release assets on the [GitHub releases page](https://github.com/tekwizely/python-charmd/releases). Download the desired version and install it directly:
 
 ```bash
 pip install charmd-*.whl
@@ -251,8 +251,8 @@ Replace `*` with the specific version number, or use the exact filename.
 Clone the repository and install using pip:
 
 ```bash
-git clone https://github.com/tekwizely/pycharm_debug.git
-cd pycharm_debug
+git clone https://github.com/tekwizely/python-charmd.git
+cd python-charmd
 pip install .
 ```
 
@@ -261,8 +261,8 @@ pip install .
 For development work, install in editable mode so changes take effect immediately:
 
 ```bash
-git clone https://github.com/tekwizely/pycharm_debug.git
-cd pycharm_debug
+git clone https://github.com/tekwizely/python-charmd.git
+cd python-charmd
 pip install -e .
 ```
 
@@ -273,8 +273,8 @@ This allows you to modify the source code and test changes without reinstalling.
 You can also run `charmd` directly from the cloned repository without installing:
 
 ```bash
-git clone https://github.com/tekwizely/pycharm_debug.git
-cd pycharm_debug
+git clone https://github.com/tekwizely/python-charmd.git
+cd python-charmd
 python charmd.py [options]
 # or
 python -m charmd [options]
