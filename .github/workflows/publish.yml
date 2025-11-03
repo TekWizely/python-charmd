@@ -119,9 +119,8 @@ jobs:
           inputs: >-
             ./dist/*.tar.gz
             ./dist/*.whl
-        # Note: Sigstore transparency logs are public. This is acceptable as
-        # the repository will eventually be public. Signing now establishes
-        # provenance from the start of the project.
+          upload-signing-artifacts: true
+          release-signing-artifacts: false # TODO - Enable to sign GitHub Release assets
 
       - name: Upload artifacts to GitHub Release
         env:
