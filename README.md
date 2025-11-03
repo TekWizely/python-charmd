@@ -46,7 +46,9 @@ PyCharm's debugger is powerful, but debugging scripts with different arguments o
 
 ## Quick start
 
-**⚠️ Important:** Before running any `charmd` command, ensure that PyCharm's Python Debug Server is already running and listening on the configured host and port (default: localhost:5678).
+**⚠️ Important:** Before running any `charmd` command, ensure that:
+ - PyCharm's Python Debug Server is running and listening on the configured host and port (default: localhost:5678)
+ - You set breakpoints in your code where you want to pause execution
 
 See [PyCharm's Debug Documentation](https://www.jetbrains.com/help/pycharm/debugging-code.html) for more information.
 
