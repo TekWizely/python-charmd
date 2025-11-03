@@ -31,6 +31,11 @@ from typing import Any, List, Optional, Tuple
 from . import __version__
 
 
+def _port_str_to_int(s: str) -> int:
+    """Converts a port string to an integer, ignoring commas and surrounding whitespace."""
+    return int(s.replace(",", "").strip())
+
+
 def _load_config() -> dict[str, Any]:
     """
     Reads configuration from `charmd.conf` in the current working directory.
@@ -68,7 +73,7 @@ def _load_config() -> dict[str, Any]:
                 # Coerce to intended types
                 if key == "port":
                     try:
-                        config[key] = int(value)
+                        config[key] = _port_str_to_int(value)
                     except ValueError:
                         pass  # Ignore malformed port
                 elif key in ("suspend", "stdout_to_server", "stderr_to_server"):
@@ -105,7 +110,7 @@ def _parse_args(argv: List[str]) -> Tuple[argparse.Namespace, List[str]]:
     )
     parser.add_argument(
         "--port",
-        type=int,
+        type=_port_str_to_int,
         default=5678,
         help="PyCharm debug server port (default: 5678)",
     )
