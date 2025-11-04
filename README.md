@@ -34,6 +34,7 @@ PyCharm's debugger is powerful, but debugging scripts with different arguments o
   * [From Source (Clone Repository)](#from-source-clone-repository)
   * [Verifying Installation](#verifying-installation)
   * [Uninstalling](#uninstalling)
+* [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -102,6 +103,11 @@ If you have PyCharm installed, you can point `charmd` to the bundled `pydevd-pyc
 **MacOS:**
 ```
 <PyCharm directory>/Contents/debug-eggs/pydevd-pycharm.egg
+```
+
+_alternative_:
+```
+<PyCharm directory>/Contents/plugins/python-ce/helpers/pydev
 ```
 
 For example, on MacOS:
@@ -302,6 +308,46 @@ To remove `charmd`:
 
 ```bash
 pip uninstall charmd
+```
+
+------------------
+## Troubleshooting
+
+<!--
+Each troubleshooting entry below follows a consistent, linkable pattern so issues are easy to find and act on. Use the template for future entries:
+
+### Troubleshooting entry pattern
+- Title: A short, descriptive title (use `###` so it appears in the TOC and is linkable)
+- Issue: What you see (error messages, symptoms, and when it occurs)
+- Solution: Concrete steps to resolve or work around the problem
+- Example: Optional concrete command or config snippet demonstrating the fix
+- Notes: Optional additional context or references
+-->
+
+### MacOS: pydevd attach.dylib missing when invoking a .py script
+
+Issue
+
+```
+Expected: <PyCharm directory/.../pydevd-pycharm.egg/pydevd_attach_to_process/attach.dylib to exist.
+```
+
+This error can occur when running a Python script (for example `charmd -- myscript.py`).
+
+On MacOS the packaged `pydevd-pycharm.egg` layout may not expose the bundled `attach.dylib` at the path `pydevd-pycharm` expects.
+
+Solution
+
+Point `charmd` at PyCharm's `pydev` helpers directory instead of the egg. You can pass the path via the `--pydevd-path` command-line option or set `pydevd_path` in `charmd.conf`:
+
+```
+<PyCharm directory>/Contents/plugins/python-ce/helpers/pydev
+```
+
+Example
+
+```bash
+charmd --pydevd-path "/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev" -- myscript.py
 ```
 
 ----------
