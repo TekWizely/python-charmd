@@ -211,7 +211,7 @@ def _create_config_file(opts: argparse.Namespace) -> int:
 
 def _start_debugger(opts: argparse.Namespace) -> bool:
     if opts.pydevd_path:
-        sys.path.insert(0, opts.pydevd_path)
+        sys.path.append(opts.pydevd_path)
 
     try:
         import pydevd_pycharm  # type: ignore
