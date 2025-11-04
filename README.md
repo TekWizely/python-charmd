@@ -1,6 +1,6 @@
 # charmd
 
-A PyCharm debug session helper that starts a debug server and then runs your Python target in the same process.
+A command-line utility that streamlines your PyCharm debugging workflow by allowing you to launch and debug Python scripts directly from the terminal, eliminating the need for manual Run Configurations.
 
 ## Why charmd?
 
