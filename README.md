@@ -1,15 +1,19 @@
 # charmd
 
-A command-line utility that streamlines your PyCharm debugging workflow by allowing you to launch and debug Python scripts directly from the terminal, eliminating the need for manual Run Configurations.
+A command-line utility that streamlines console script debugging in PyCharm by allowing you to initiate a debug session directly from the terminal, eliminating the need for manual Run Configurations.
+
+_video: initiate console script debug session_
+
+https://github.com/user-attachments/assets/e86d3da6-4900-4c4f-a470-27f92e3ff99e
 
 ## Why charmd?
 
-PyCharm's debugger is powerful, but debugging scripts with different arguments or configurations typically means editing Run Configurations through the IDE. This becomes cumbersome when:
-- You need to debug one-off commands with unique CLI arguments
-- You're testing different script variations or parameter combinations
-- You want the simplicity of command-line debugging (like `pdb` or `debugpy`) with PyCharm's full IDE debugging experience
+PyCharm's debugger is powerful, but debugging console scripts with varying arguments typically means editing Run Configurations through the IDE. This becomes cumbersome when:
+- You need to debug a one-off set of unique arguments
+- You need to rapidly debug varying command line options
+- You want the simplicity of CLI-iniated debugging (like `pdb` or `debugpy`) with PyCharm's full IDE debugging experience
 
-`charmd` eliminates this friction by letting you debug any Python command directly from the terminal.
+`charmd` eliminates this friction by letting you initiate debug sessions of console scripts directly from the terminal, making it trivial to debug against varying command-line arguments.
 
 ---
 
