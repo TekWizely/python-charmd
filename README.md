@@ -1,10 +1,9 @@
 # charmd
 
-A command-line utility that streamlines console script debugging in PyCharm by allowing you to initiate a debug session directly from the terminal, eliminating the need for manual Run Configurations.
+Debug console scripts in PyCharm directly from the terminal, avoiding manual Run Configurations or temporary code imports.
 
-_video: initiate console script debug session_
-
-https://github.com/user-attachments/assets/e86d3da6-4900-4c4f-a470-27f92e3ff99e
+_start the debugger, set some breakpoints, and run your script!_
+![charmd-hello-world](https://github.com/user-attachments/assets/ed6731e7-4acf-47a1-96c8-97e9a9d778ff)
 
 ## Why charmd?
 
