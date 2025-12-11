@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "charmd"
-description = "Effortlessly debug Python scripts from the Terminal with PyCharm"
+description = "Debug console scripts in PyCharm directly from the terminal, avoiding manual Run Configurations or temporary code imports"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [ { name = "python-charmd contributors" } ]
